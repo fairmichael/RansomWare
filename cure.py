@@ -1,5 +1,4 @@
 from base64 import b64encode, b64decode
-from optparse import OptionParser
 import encryption, constants, os, json, cryptools
 
 '''
