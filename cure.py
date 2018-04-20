@@ -11,7 +11,7 @@ where this program is executed.
 
 def main():
 
-	folder_path = '.'
+	folder_path = '..'
 
 	rsa_cipher = encryption.AsymmetricCipher(constants.RSA_FOLDER_PATH)
 
