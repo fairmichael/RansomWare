@@ -1,5 +1,6 @@
 # RansomWare
 
+** Place ransomware folder in the directory you want to encrypt ** 
 
 ## Directions for virus:
 
