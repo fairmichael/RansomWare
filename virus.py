@@ -57,7 +57,7 @@ def main():
 				json.dump(json_dict, json_file)
 
 			os.remove(os.path.join(current_directory, file))
-			print('\n[+] Encrypting %s\n' % os.path.join(current_directory, file))
+			print('\n[+] Encrypted %s\n' % os.path.join(current_directory, file))
 
 	
 
