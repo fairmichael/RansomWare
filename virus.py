@@ -1,9 +1,13 @@
 from base64 import b64encode, b64decode
-from optparse import OptionParser
 import encryption, constants, os, json, cryptools
 
 
+'''
 
+Encrypts everything in the directory
+where this program is executed
+
+'''
 
 def main():
 
