@@ -23,76 +23,81 @@ def EncryptFolder(folder_path):
 
 	rsa_cipher = encryption.AsymmetricCipher(constants.RSA_FOLDER_PATH)
 
-	for file in os.listdir(folder_path):
+	for current_directory, sub_directories, sub_files in os.walk(folder_path):
 
-		json_dict = dict()
+		for file in sub_files:
 
-		ext = file.split('.')[1]
+			json_dict = dict()
 
-		fileName = file.split('.')[0]
+			ext = file.split('.')[1]
 
-		aes_key = os.urandom(constants.AES_KEY_LENGTH)
+			fileName = file.split('.')[0]
 
-		aes_iv = os.urandom(constants.IV_LENGTH)
+			aes_key = os.urandom(constants.AES_KEY_LENGTH)
 
-		aes_cipher = encryption.SymmetricCipher(aes_key, aes_iv)
+			aes_iv = os.urandom(constants.IV_LENGTH)
 
-		hmac_key = os.urandom(constants.HMAC_KEY_LENGTH)
+			aes_cipher = encryption.SymmetricCipher(aes_key, aes_iv)
 
-		with open(os.path.join(folder_path, file), 'rb') as f:
-			ciphertext = aes_cipher.Encrypt(f.read())
+			hmac_key = os.urandom(constants.HMAC_KEY_LENGTH)
 
-		tag = cryptools.HMAC(ciphertext, hmac_key)
+			with open(os.path.join(current_directory, file), 'rb') as f:
+				ciphertext = aes_cipher.Encrypt(f.read())
 
-		encrypted_keys = rsa_cipher.Encrypt(aes_key + hmac_key)
+			tag = cryptools.HMAC(ciphertext, hmac_key)
+
+			encrypted_keys = rsa_cipher.Encrypt(aes_key + hmac_key)
 
 
-		json_dict['IV'] = b64encode(aes_iv)
-		json_dict['KEY'] = b64encode(encrypted_keys)
-		json_dict['TAG'] = b64encode(tag)
-		json_dict['EXT'] = b64encode(ext)
-		json_dict['CIPHER'] = b64encode(ciphertext)
+			json_dict['IV'] = b64encode(aes_iv)
+			json_dict['KEY'] = b64encode(encrypted_keys)
+			json_dict['TAG'] = b64encode(tag)
+			json_dict['EXT'] = b64encode(ext)
+			json_dict['CIPHER'] = b64encode(ciphertext)
 
-		with open(os.path.join(folder_path, fileName + '.json'), 'w') as json_file:
-			json.dump(json_dict, json_file)
+			with open(os.path.join(current_directory, fileName + '.json'), 'w') as json_file:
+				json.dump(json_dict, json_file)
 
-		os.remove(os.path.join(folder_path, file))
+			os.remove(os.path.join(current_directory, file))
 
 
 def DecryptFolder(folder_path):
 
 	rsa_cipher = encryption.AsymmetricCipher(constants.RSA_FOLDER_PATH)
 
-	for file in os.listdir(folder_path):
+	for current_directory, sub_directories, sub_files in os.walk(folder_path):
 
-		with open(os.path.join(folder_path, file), 'r') as js:
-			json_dict = json.load(js)
+		for file in sub_files:
+			if 'json' not in file:
+				continue
+			with open(os.path.join(current_directory, file), 'r') as js:
+				json_dict = json.load(js)
 
-		fileName = file.split('.')[0]
+			fileName = file.split('.')[0]
 
-		tag = b64decode(json_dict['TAG'])
+			tag = b64decode(json_dict['TAG'])
 
-		cipherkeys = b64decode(json_dict['KEY'])
+			cipherkeys = b64decode(json_dict['KEY'])
 
-		ciphertext = b64decode(json_dict['CIPHER'])
+			ciphertext = b64decode(json_dict['CIPHER'])
 
-		concatenated_keys = rsa_cipher.Decrypt(cipherkeys)
+			concatenated_keys = rsa_cipher.Decrypt(cipherkeys)
 
-		aes_key, hmac_key = (concatenated_keys[:constants.AES_KEY_LENGTH], concatenated_keys[constants.AES_KEY_LENGTH:])
+			aes_key, hmac_key = (concatenated_keys[:constants.AES_KEY_LENGTH], concatenated_keys[constants.AES_KEY_LENGTH:])
 
-		aes_iv = b64decode(json_dict['IV'])
+			aes_iv = b64decode(json_dict['IV'])
 
-		ext = b64decode(json_dict['EXT'])
+			ext = b64decode(json_dict['EXT'])
 
-		aes_cipher = encryption.SymmetricCipher(aes_key, aes_iv)
+			aes_cipher = encryption.SymmetricCipher(aes_key, aes_iv)
 
-		if cryptools.HMAC(ciphertext, hmac_key) != tag:
-			print('Ciphertext has been changed for %s ', file)
+			if cryptools.HMAC(ciphertext, hmac_key) != tag:
+				print('Ciphertext has been changed for %s ', file)
 
-		with open(os.path.join(folder_path, fileName + '.' + ext), 'wb') as f:
-			f.write(aes_cipher.Decrypt(ciphertext))
+			with open(os.path.join(current_directory, fileName + '.' + ext), 'wb') as f:
+				f.write(aes_cipher.Decrypt(ciphertext))
 
-		os.remove(os.path.join(folder_path, file))
+			os.remove(os.path.join(current_directory, file))
 
 
 
