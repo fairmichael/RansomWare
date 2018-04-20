@@ -33,12 +33,12 @@ def main():
 			tag = b64decode(json_dict['TAG'])
 
 			cipherkeys = b64decode(json_dict['KEY'])
+			
+			cipherkeys = rsa_cipher.Decrypt(cipherkeys)
 
 			ciphertext = b64decode(json_dict['CIPHER'])
 
-			concatenated_keys = rsa_cipher.Decrypt(cipherkeys)
-
-			aes_key, hmac_key = (concatenated_keys[:constants.AES_KEY_LENGTH], concatenated_keys[constants.AES_KEY_LENGTH:])
+			aes_key, hmac_key = (cipherkeys[:constants.AES_KEY_LENGTH], cipherkeys[constants.AES_KEY_LENGTH:])
 
 			aes_iv = b64decode(json_dict['IV'])
 
