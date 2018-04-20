@@ -12,4 +12,4 @@ python virus.py
 
 cd /path/to/ransomware
 
-python virus.py
+python cure.py
