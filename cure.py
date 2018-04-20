@@ -52,7 +52,7 @@ def main():
 			with open(os.path.join(current_directory, fileName + '.' + ext), 'wb') as f:
 				f.write(aes_cipher.Decrypt(ciphertext))
 
-			print('\n[+] Decrypting %s\n' % os.path.join(current_directory, fileName + '.' + ext))
+			print('\n[+] Decrypted %s\n' % os.path.join(current_directory, fileName + '.' + ext))
 
 			os.remove(os.path.join(current_directory, file))
 
