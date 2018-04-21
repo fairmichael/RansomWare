@@ -1,5 +1,6 @@
 from base64 import b64encode, b64decode
-import encryption, constants, os, json, cryptools
+from threading import Thread
+import encryption, constants, os, json, cryptools, sys, time
 
 '''
 
@@ -7,9 +8,19 @@ Decrypts everything in the directory
 where this program is executed.
 
 '''
+progressbar = True
 
+repeat = True
 
 def main():
+
+	global justPrinted
+
+	global repeat
+
+	animation = Thread(target=cinematics)
+
+	animation.start()
 
 	folder_path = '..'
 
@@ -30,6 +41,8 @@ def main():
 
 			fileName = ''.join(file.split('.')[:-1])
 
+			ext = b64decode(json_dict['EXT'])
+
 			tag = b64decode(json_dict['TAG'])
 
 			cipherkeys = b64decode(json_dict['KEY'])
@@ -42,8 +55,6 @@ def main():
 
 			aes_iv = b64decode(json_dict['IV'])
 
-			ext = b64decode(json_dict['EXT'])
-
 			aes_cipher = encryption.SymmetricCipher(aes_key, aes_iv)
 
 			if cryptools.HMAC(ciphertext, hmac_key) != tag:
@@ -52,10 +63,27 @@ def main():
 			with open(os.path.join(current_directory, fileName + '.' + ext), 'wb') as f:
 				f.write(aes_cipher.Decrypt(ciphertext))
 
-			print('\n[+] Decrypted %s\n' % os.path.join(current_directory, fileName + '.' + ext))
+			progressbar = False
+			print('\n[+] Encrypted %s\n' % os.path.join(current_directory, fileName + '.' + ext))
+			progressbar = True
 
 			os.remove(os.path.join(current_directory, file))
 
+	repeat = False
+
+
+def cinematics():
+	while repeat:
+		if progressbar:
+			sys.stdout.write('\b/')
+			sys.stdout.flush()
+			time.sleep(0.1)
+			sys.stdout.write('\b-')
+			sys.stdout.flush()
+			time.sleep(0.1)
+			sys.stdout.write('\b\\')
+			sys.stdout.flush()
+			time.sleep(0.1)
 
 
 if __name__ == '__main__':

