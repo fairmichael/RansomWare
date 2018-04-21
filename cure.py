@@ -20,11 +20,7 @@ def main():
 
 	animation = Thread(target=cinematics)
 
-	os.chdir('..')
-	sys.stdout.write('\nCuring Directory: ' + colorama.Fore.RED + os.getcwd() + '...  ')
-	sys.stdout.flush()
-	sys.stdout.write(colorama.Style.RESET_ALL)
-	os.chdir('ransomware')
+	printheader()
 
 	animation.start()
 
@@ -77,20 +73,26 @@ def main():
 def cinematics():
 	while repeat:
 		if progressbar:
-			sys.stdout.write(colorama.Fore.RED + '\b/')
+			sys.stdout.write(colorama.Fore.GREEN + '\b/')
 			sys.stdout.flush()
 			time.sleep(0.1)
-			sys.stdout.write(colorama.Fore.RED + '\b-')
+			sys.stdout.write(colorama.Fore.GREEN + '\b-')
 			sys.stdout.flush()
 			time.sleep(0.1)
-			sys.stdout.write(colorama.Fore.RED + '\b\\')
+			sys.stdout.write(colorama.Fore.GREEN + '\b\\')
 			sys.stdout.flush()
 			time.sleep(0.1)
 	os.chdir('..')
 	sys.stdout.write('\b \n\n' + colorama.Style.RESET_ALL + 'Directory has been ' + colorama.Fore.GREEN + 'cured' + colorama.Style.RESET_ALL + '\n\n')
 	sys.stdout.write(colorama.Style.RESET_ALL)
 
-
+def printheader():
+	os.chdir('..')
+	sys.stdout.write('\nCuring Directory: ' + colorama.Fore.RED + os.getcwd() + '...  ')
+	sys.stdout.flush()
+	sys.stdout.write(colorama.Style.RESET_ALL)
+	os.chdir('ransomware')
+	
 
 if __name__ == '__main__':
 	main()

