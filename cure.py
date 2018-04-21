@@ -1,6 +1,6 @@
 from base64 import b64encode, b64decode
 from threading import Thread
-import encryption, constants, os, json, cryptools, sys, time
+import encryption, constants, os, json, cryptools, sys, time, colorama
 
 '''
 
@@ -19,6 +19,12 @@ def main():
 	global repeat
 
 	animation = Thread(target=cinematics)
+
+	os.chdir('..')
+	sys.stdout.write('\nCuring Directory: ' + colorama.Fore.RED + os.getcwd() + '...  ')
+	sys.stdout.flush()
+	sys.stdout.write(colorama.Style.RESET_ALL)
+	os.chdir('ransomware')
 
 	animation.start()
 
@@ -63,10 +69,6 @@ def main():
 			with open(os.path.join(current_directory, fileName + '.' + ext), 'wb') as f:
 				f.write(aes_cipher.Decrypt(ciphertext))
 
-			progressbar = False
-			print('\n[+] Encrypted %s\n' % os.path.join(current_directory, fileName + '.' + ext))
-			progressbar = True
-
 			os.remove(os.path.join(current_directory, file))
 
 	repeat = False
@@ -75,15 +77,19 @@ def main():
 def cinematics():
 	while repeat:
 		if progressbar:
-			sys.stdout.write('\b/')
+			sys.stdout.write(colorama.Fore.RED + '\b/')
 			sys.stdout.flush()
 			time.sleep(0.1)
-			sys.stdout.write('\b-')
+			sys.stdout.write(colorama.Fore.RED + '\b-')
 			sys.stdout.flush()
 			time.sleep(0.1)
-			sys.stdout.write('\b\\')
+			sys.stdout.write(colorama.Fore.RED + '\b\\')
 			sys.stdout.flush()
 			time.sleep(0.1)
+	os.chdir('..')
+	sys.stdout.write('\b \n\n' + colorama.Style.RESET_ALL + 'Directory has been ' + colorama.Fore.GREEN + 'cured' + colorama.Style.RESET_ALL + '\n\n')
+	sys.stdout.write(colorama.Style.RESET_ALL)
+
 
 
 if __name__ == '__main__':

